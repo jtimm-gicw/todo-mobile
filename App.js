@@ -1,6 +1,7 @@
 // STEP 1: Import React hooks, mobile elements, and our reusable components.
 import { useState } from 'react';
-import { SafeAreaView, ScrollView, View, Text, Pressable, StyleSheet, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
+import { ScrollView, View, Text, Pressable, StyleSheet, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import TaskInput from './components/TaskInput';
 import TaskItem from './components/TaskItem';
@@ -60,9 +61,9 @@ export default function App() {
   const suggestion = tasks.find(task => task.id === pickedId && !task.complete)?.text;
   const progress = tasks.length ? completeCount / tasks.length : 0;
 
-  // STEP 7: Styles change when the theme changes, like CSS variables on the web.
+  // STEP 7: SafeAreaView keeps the bottom tabs ABOVE Android's navigation bar.\n  // It also respects the top status bar and iPhone home indicator.\n  // Styles change with the theme, like CSS variables on the web.
   return (
-    <SafeAreaView style={[styles.screen, { backgroundColor: theme.background }]}>
+    <SafeAreaView edges={['top', 'bottom', 'left', 'right']} style={[styles.screen, { backgroundColor: theme.background }]}>
       <StatusBar barStyle={theme.status} backgroundColor={theme.background} />
       <KeyboardAvoidingView style={styles.fill} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
         <View style={[styles.header, { backgroundColor: theme.background }]}>
@@ -115,7 +116,7 @@ export default function App() {
 
 // STEP 11: Styles live in JS objects, which React Native calls StyleSheet.
 const styles = StyleSheet.create({
-  screen: { flex: 1, paddingTop: Platform.OS === 'android' ? (StatusBar.currentHeight || 0) : 0 },
+  screen: { flex: 1 },
   fill: { flex: 1 },
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 20, paddingTop: 18, paddingBottom: 12, gap: 10 },
   headerText: { flex: 1 },
