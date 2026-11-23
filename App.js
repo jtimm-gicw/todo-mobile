@@ -1,7 +1,7 @@
 // STEP 1: Import React hooks, mobile elements, and our reusable components.
 import { useState } from 'react';
 import { ScrollView, View, Text, Pressable, StyleSheet, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import TaskInput from './components/TaskInput';
 import TaskItem from './components/TaskItem';
@@ -12,7 +12,7 @@ import useShakePicker from './hooks/useShakePicker';
 import { themes } from './theme';
 
 // STEP 2: App is the parent, so both screens can share the same state.
-export default function App() {
+function MobileTodoApp() {
   // STEP 3: The existing task features still use familiar React useState.
   const [tasks, setTasks] = useState([
     { id: '1', text: 'Install Expo Go', complete: false },
@@ -134,3 +134,13 @@ const styles = StyleSheet.create({
   empty: { fontSize: 17, textAlign: 'center', paddingVertical: 30 },
   note: { fontSize: 14, marginTop: 12, marginBottom: 4 },
 });
+
+// STEP 12: Provide safe-area information to the whole app.
+// This keeps our tab bar clear of Android's system navigation controls.
+export default function App() {
+  return (
+    <SafeAreaProvider>
+      <MobileTodoApp />
+    </SafeAreaProvider>
+  );
+}
