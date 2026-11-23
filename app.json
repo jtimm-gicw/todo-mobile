@@ -1,0 +1,15 @@
+{
+  "expo": {
+    "name": "Mobile To-Do 41",
+    "slug": "mobile-todo-class41",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.example.mobiletodo41"
+    }
+  }
+}
