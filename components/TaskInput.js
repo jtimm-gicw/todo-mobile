@@ -1,36 +1,34 @@
-// STEP 1: Import the React Native building blocks.
-// View = web <div>; TextInput = web <input>; Pressable = clickable area.
+// STEP 1: React Native uses TextInput and Pressable instead of HTML input/button.
 import { View, TextInput, Pressable, Text, StyleSheet } from 'react-native';
 
-// STEP 2: Receive props from App. Props work just like regular React.
-export default function TaskInput({ text, onChangeText, onAdd }) {
+// STEP 2: text, callbacks, and theme arrive from the parent App via props.
+export default function TaskInput({ text, onChangeText, onAdd, theme }) {
   return (
-    <View style={styles.row}>
-      {/* STEP 3: Controlled input: App owns the text in useState. */}
+    <View style={styles.wrap}>
+      {/* STEP 3: App's useState controls what appears in this input. */}
       <TextInput
-        style={styles.input}
-        placeholder="What do you need to do?"
-        placeholderTextColor="#64748b"
+        style={[styles.input, { backgroundColor: theme.card, color: theme.text, borderColor: theme.border }]}
+        placeholder="Add something to do…"
+        placeholderTextColor={theme.placeholder}
         value={text}
         onChangeText={onChangeText}
         onSubmitEditing={onAdd}
         returnKeyType="done"
-        accessibilityLabel="New task"
+        accessibilityLabel="New task name"
       />
-      {/* STEP 4: onPress is React Native's version of onClick. */}
-      <Pressable style={styles.button} onPress={onAdd} accessibilityRole="button">
-        <Text style={styles.buttonText}>Add</Text>
+      {/* STEP 4: Big tap targets are easier for thumbs to reach. */}
+      <Pressable onPress={onAdd} accessibilityRole="button" accessibilityLabel="Add task"
+        style={({ pressed }) => [styles.button, { backgroundColor: theme.accent, opacity: pressed ? 0.75 : 1 }]}>
+        <Text style={[styles.buttonText, { color: theme.accentText }]}>+ Add</Text>
       </Pressable>
     </View>
   );
 }
 
-// STEP 5: React Native styles are JavaScript objects, not CSS files.
+// STEP 5: StyleSheet is CSS-in-JS; values are JavaScript objects, not CSS classes.
 const styles = StyleSheet.create({
-  row: { flexDirection: 'row', gap: 10, marginVertical: 15 },
-  input: { flex: 1, minWidth: 0, backgroundColor: 'white', borderWidth: 1,
-    borderColor: '#cbd5e1', borderRadius: 12, paddingHorizontal: 12, fontSize: 17 },
-  button: { backgroundColor: '#2563eb', paddingHorizontal: 20,
-    justifyContent: 'center', borderRadius: 12, minHeight: 52 },
-  buttonText: { color: 'white', fontWeight: 'bold', fontSize: 17 },
+  wrap: { gap: 10, marginTop: 18, marginBottom: 20 },
+  input: { minHeight: 56, borderWidth: 1.5, borderRadius: 16, paddingHorizontal: 16, fontSize: 18 },
+  button: { minHeight: 52, borderRadius: 16, alignItems: 'center', justifyContent: 'center' },
+  buttonText: { fontSize: 18, fontWeight: '800' },
 });

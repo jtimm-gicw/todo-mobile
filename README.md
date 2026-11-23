@@ -1,171 +1,164 @@
-# ✅ Mobile To-Do — Code 401 Class 41 (Milestone 1 MVP)
+# ✅ Mobile To-Do — Code 401 Class 42: Polish & Delivery
 
-**A beginner-friendly React Native + Expo app.** Inspired by the task list behavior in [Daymark / todo-app (main)](https://github.com/jtimm-gicw/todo-app/tree/main), but deliberately **not** a copy of the web application. The mobile project has no Express API, login, PostgreSQL, Vite, Mantine, or browser CSS.
+A beginner-friendly **React Native + Expo** app, based on the task-management ideas in [Daymark todo-app (`main`)](https://github.com/jtimm-gicw/todo-app/tree/main). This is a separate mobile project with no backend, database, login, or navigation library.
 
-## 🎯 Goal
+## 👩‍🎓 What the app does
 
-In your **first React Native lab**, use the React skills you already know (components, props, `useState`, `.map()`, `.filter()`) to make an app run **on a real phone**. The assignment introduction mentions two phone features; the detailed minimum says one. **Our demo uses two** to satisfy both descriptions.
+- **Tasks screen:** Add tasks, check them off, delete them, view completion progress.
+- **About & Demo screen:** See the same progress, check the current theme, and read end-user instructions.
+- **Light / dark mode:** Tap the top-right theme button; both screens update.
+- **Phone feature #1 — Haptics:** Tapping a task gives physical feedback (if supported).
+- **Phone feature #2 — Accelerometer:** Gently shake the phone to choose an unfinished task (if supported).
+- Thumb-friendly bottom tabs, large buttons, strong color contrast, and accessibility labels.
 
-### What works in this MVP
+**Learning goal:** Use existing React knowledge (`useState`, props, `.map()`, `.filter()`, conditional rendering) to build a mobile experience with native components and JavaScript-based `StyleSheet` styling (CSS-in-JS).
 
-- Add a task; mark it finished; delete a task.
-- See the completed-task count.
-- **Native feature #1 — Haptics:** the phone gives touch/vibration feedback when you toggle a task.
-- **Native feature #2 — Accelerometer:** shake the phone to randomly highlight an unfinished task.
-- Bright, readable mobile styling and accessibility labels.
-- No internet API or database required once the app bundle has loaded.
+**Important limitation:** Tasks and theme are stored in memory only and reset after a reload. Saving data permanently is a possible future exercise, not required for these milestones.
 
-**MVP limitation:** Tasks live in React state only, so restarting/reloading the app resets the demo list. This is intentional for Milestone 1. Some devices may not support haptics or motion detection; test on a physical phone. Motion does not work reliably in browser previews.
+## ✅ Class 42 rubric
 
-## 📁 Files
+| Requirement | Where it is demonstrated |
+|---|---|
+| Two screens/components | `Tasks` in `App.js`, `About & Demo` in `AboutScreen.js` (and several reusable components) |
+| State shared between screens | `App.js` owns tasks, theme and screen state; `AboutScreen` receives `completed`, `total`, `isDark` props |
+| Native device feature | `expo-haptics` and `expo-sensors` (accelerometer) |
+| Thoughtful CSS-in-JS styling | `StyleSheet.create()` plus `theme.js` colors |
+| Right-sized tap targets, contrast | Most controls 52–62 points high, clear text on light/dark palettes |
+| Dark/light modes | Toggle in `App.js`; shared theme prop updates both screens |
+| Left/right thumb usability | Full-width Add button, bottom tabs, generous task controls |
+| End-user documentation | “How to use” below and About & Demo screen |
+| Live demo | 3-minute script below; test on a real phone |
 
-```text
-mobile-todo-class41/
-├── App.js                     # STEP 1–10: Parent screen; owns tasks and callbacks
-├── components/
-│   ├── TaskInput.js           # STEP 1–5: controlled form and Add button
-│   ├── TaskItem.js            # STEP 1–5: one task, complete/delete actions
-│   └── ShakeTip.js            # STEP 1–4: explains motion + shows chosen task
-├── hooks/
-│   └── useShakePicker.js      # STEP 1–6: motion sensor subscription
-├── docs/
-│   └── INSTRUCTOR_DEMO.md     # guided live teaching script
-├── app.json                   # Expo display name and settings
-├── package.json               # project scripts and packages
-└── README.md                  # you are here
-```
-
-## 🗺️ UML — Component and data flow
+## 🗺️ UML — Component relationships and shared state
 
 ```mermaid
 flowchart TD
-  A[App.js — state: tasks, text, pickedId] -->|text, onChangeText, onAdd| B[TaskInput]
-  A -->|task, onToggle, onDelete| C[TaskItem — repeated]
-  A -->|supported, suggestion| D[ShakeTip]
-  A -->|onShake callback| E[useShakePicker]
-  E --> F[Phone accelerometer]
-  A --> G[Expo Haptics — vibration]
+  A[App.js: tasks / text / pickedId / screen / isDark] -->|text and callbacks| B[TaskInput]
+  A -->|task and callbacks| C[TaskItem x N]
+  A -->|sensor status and suggestion| D[ShakeTip]
+  A -->|completed, total, isDark, theme| E[AboutScreen]
+  A -->|screen, onChange, theme| F[BottomTabs]
+  A -->|onShake| G[useShakePicker]
+  G --> H[Phone accelerometer]
+  A --> I[Expo Haptics]
+  J[theme.js: light and dark colors] --> A
 ```
 
-**What UML means:** A diagram showing which parts of our application communicate. Data goes **down as props**; events call functions **back up in App**.
+**UML:** A picture of the app's parts and how they share information. The parent `App.js` stores state and sends values and callback functions down to child components as props.
 
-## 💻 Setup — first time
+## 📂 File guide
 
-You need **Node.js LTS (22.13+ recommended)**, npm, a phone with **Expo Go** compatible with SDK 58, and a computer and phone connected to the same network (or use a tunnel).
-
-### Option A: Use the ready-made project (recommended for the demo)
-
-1. Download or clone this repository (after you publish it to GitHub).
-2. In a terminal, go into its folder.
-3. Install packages and check the setup:
-
-```bash
-npm install
-npx expo install --check
-npx expo-doctor@latest
+```text
+todo-mobile-app-class42/
+├── App.js                     Main app, task state, screen & theme toggle
+├── theme.js                   Light and dark color palettes
+├── components/
+│   ├── TaskInput.js           Controlled input, Add button
+│   ├── TaskItem.js            Complete and Delete controls
+│   ├── ShakeTip.js            Motion instructions and selected task
+│   ├── AboutScreen.js         Second screen, shared state example
+│   └── BottomTabs.js          Two thumb-friendly navigation buttons
+├── hooks/
+│   └── useShakePicker.js      Motion listener, cleanup, shake cooldown
+├── docs/
+│   └── CLASS42_INSTRUCTOR_GUIDE.md
+├── app.json                   Expo project settings
+├── package.json               Package list and start commands
+└── README.md
 ```
 
-4. Start Expo:
+Each source component is documented with **`STEP #` teaching comments**. The existing Class 41 add/complete/delete logic and phone features remain familiar.
 
-```bash
-npx expo start
+## 💻 PowerShell: upgrade your existing `todo-mobile-app`
+
+**Back up your working Class 41 project first.** This ZIP is an updated replacement project, not an automatic patch. You can either extract it into a new folder (safest) or replace the code files in your existing folder. Don't overwrite any locally customized work without saving it first.
+
+### Safest method — run the new folder
+
+1. Download and extract `todo-mobile-app-class42.zip` into `Downloads`.
+2. In PowerShell:
+
+```powershell
+cd "$HOME\Downloads\todo-mobile-app-class42"
+npm.cmd install
+npx.cmd expo install --check
+npx.cmd expo start --tunnel
 ```
 
-5. Open **Expo Go** on your Android phone and scan the QR shown in the terminal. On iPhone, scan using the Camera app / Expo Go as supported.
-6. Add a task, tap to complete it, then gently shake the phone. Do not throw or drop the phone.
+3. Open **Expo Go** on your Android phone and scan the QR code. Use tunnel mode because it worked for the Class 41 project on your network.
+4. If a dependency mismatch is reported, run `npx.cmd expo install --fix`, then try `npx.cmd expo start --tunnel --clear`.
 
-If phone and laptop cannot communicate because of the local network, try:
+### Replace your current project instead
 
-```bash
-npx expo start --tunnel
+Copy **`App.js`, `theme.js`, `components/`, `hooks/`, `app.json`, `README.md`, and `docs/`** from the new folder into your existing `todo-mobile-app` folder. Keep your existing `.git` folder. Use the updated `package.json` only after checking for any dependencies you personally added. Then:
+
+```powershell
+cd "$HOME\Downloads\todo-mobile-app"
+npm.cmd install
+npx.cmd expo start --tunnel --clear
 ```
 
-Tunnel mode requires network access and may ask you to install a tunnel dependency or sign in. If the app shows an SDK mismatch, update Expo Go and run `npx expo install --fix` followed by `npx expo-doctor@latest`. **QR codes work only while the Expo development server is running and reachable**; sharing the GitHub URL does not itself make a live QR available to anyone at any time.
+If your existing project lives elsewhere, change the `cd` path. You do **not** need PostgreSQL, a backend, Android Studio or an emulator. A physical Android phone with compatible Expo Go is enough.
 
-**PowerShell note:** If Windows blocks npm scripts, use `npm.cmd install`, `npx.cmd expo start`, or launch a suitable terminal.
+## 📱 Instructions for end users
 
-### Option B: Build it with the class from a blank Expo app
-
-Use a **blank JavaScript** Expo template (not the default Expo Router tabs template):
-
-```bash
-npx create-expo-app@latest mobile-todo-class41 --template blank
-cd mobile-todo-class41
-npx expo install expo-haptics expo-sensors
-```
-
-Then create the `components/` and `hooks/` folders, and copy the five source files (`App.js`, the three components, and the hook) from this repository. Run `npx expo start`. Expo sets compatible package versions for you when using `expo install`.
-
-## 👩‍🏫 Step-by-step implementation plan
-
-| Order | Open file | Student task | React web connection |
-|---|---|---|---|
-| 1 | `App.js` | Render a title with `Text` inside a `View`/`SafeAreaView` | `<h1>` inside a `<div>` |
-| 2 | `components/TaskInput.js` | Add a `TextInput` and `Pressable` button | input + button |
-| 3 | `App.js` | Set up `text` and `tasks` with `useState` | same hooks |
-| 4 | `App.js` | Write `addTask`, `toggleTask`, `deleteTask` | spread/map/filter |
-| 5 | `components/TaskItem.js` | Render one row, pass callback props | reusable React component |
-| 6 | `App.js` | Use `tasks.map()` to show all tasks | same as web |
-| 7 | `App.js` | Add `Haptics.selectionAsync()` | native phone feature #1 |
-| 8 | `hooks/useShakePicker.js` | Listen for movement with `Accelerometer` | `useEffect` + event cleanup |
-| 9 | `components/ShakeTip.js` | Display the highlighted task | conditional JSX |
-| 10 | all files | Demonstrate on phone; practice styling | StyleSheet instead of CSS |
-
-## 📱 How to use the app (end-user instructions)
-
-1. Enter a task and press **Add**.
-2. Tap the task to mark it completed. The phone may vibrate briefly.
+1. On **Tasks**, type a new task, then tap **+ Add**.
+2. Tap the checkbox or task text to mark it done. A supported phone will produce a small vibration.
 3. Tap **Delete** to remove a task.
-4. Shake your phone to highlight an unfinished task. The chosen task appears in a blue instruction panel and gets a yellow border.
-5. Reloading the app restores the initial demonstration tasks.
+4. Gently shake the phone to highlight a randomly selected unfinished task.
+5. Tap **☾ Dark** / **☀ Light** in the header to switch appearance.
+6. Tap **About & Demo** to read instructions and see the same completion count. Tap **Tasks** to return.
+7. Keep Expo running on the developer's computer while testing through the QR code.
 
-## ✅ Class 41 / Milestone 1 checklist
+## 🎤 Three-minute classroom presentation
 
-- [x] React Native / Expo source files
-- [x] Add / complete / delete task behavior
-- [x] Native device feature: haptics
-- [x] Second native device feature: accelerometer
-- [x] README, component UML, instructions, comments
-- [ ] Student confirms the app runs in Expo Go on **their own physical phone**
-- [ ] Student shows a reachable QR code while Expo is running
-- [ ] Student records screenshots / a short demonstration
-- [ ] Student publishes a **new** GitHub repository with the README at the root
-- [ ] Student presents a live demo and submits the README URL
+- **0:00–0:30 — Goal:** Explain that the project is a mobile version of a basic React task list.
+- **0:30–1:15 — Core functionality:** Add, complete, and delete a task; show the progress bar.
+- **1:15–1:45 — Native features:** Tap a task to feel haptics; gently shake to highlight one task.
+- **1:45–2:15 — UX polish:** Switch dark/light mode and show readable, large touch targets.
+- **2:15–2:45 — Shared state:** Switch to About; note the same task count and theme.
+- **2:45–3:00 — Reflection:** Explain one thing you learned about React Native vs web React.
 
-**Milestone 2 idea:** Add persistent on-device task storage (`@react-native-async-storage/async-storage`) and extra UI polish. Do not add that during the first MVP demo unless students finish early.
+## 🧪 Demo checklist
 
-## 🛠️ Troubleshooting
+- [ ] Expo opens on physical phone through `npx.cmd expo start --tunnel`
+- [ ] Add, complete, and delete tasks
+- [ ] Progress number and bar update
+- [ ] About & Demo shows the same progress
+- [ ] Light and dark modes both have readable text
+- [ ] Bottom tabs and Add / Delete controls are easy to tap
+- [ ] Haptics and shake selection tested (subject to device support)
+- [ ] QR code works while the development server is running
+- [ ] README exists at repo root and GitHub changes are committed
 
-| Problem | Try |
+## 🔧 Common issues
+
+| Issue | Solution |
 |---|---|
-| Expo QR loads but the phone cannot connect | Confirm same Wi-Fi; try `npx expo start --tunnel`; avoid blocked corporate networks |
-| `expo` command not found | Use `npx expo start` (not global `expo`) after `npm install` |
-| SDK version mismatch | Update Expo Go; run `npx expo install --fix`, then `npx expo-doctor@latest` |
-| No vibration | Device may have haptics disabled or unsupported; logic still works |
-| Shake doesn't work | Try a real phone; sensor may be missing or detection threshold not met |
-| No database / no login | Correct for Milestone 1; not needed in this simplified app |
+| PowerShell blocks `npm` or `npx` | Use `npm.cmd` and `npx.cmd` |
+| Phone can't connect to regular QR | Use `npx.cmd expo start --tunnel` |
+| Old code appears | Stop server, run `npx.cmd expo start --tunnel --clear` |
+| No vibration | Device haptic capability/settings vary |
+| Shake not detected | Use a real phone and gently but clearly shake; sensor may be unsupported |
+| Tasks reset after reload | Expected: React state is not persistent storage |
+| QR code works only while laptop is running | Expected for an Expo development server; not a published store app |
 
-## 📚 Sources
+## GitHub submission
 
-- [React Native — Getting Started](https://reactnative.dev/docs/getting-started)
-- [Expo — Create your project](https://docs.expo.dev/get-started/create-a-project/)
+Use your **separate mobile repository**, not the original `jtimm-gicw/todo-app` web repository. After testing:
+
+```powershell
+git status
+git add .
+git commit -m "Class 42: add dark mode, second screen and mobile polish"
+git push origin main
+```
+
+If you have not connected a remote repository yet, create one on GitHub and add its URL with `git remote add origin YOUR_REPO_URL` before pushing. Submit the URL to **`README.md` on `main`**.
+
+## Resources
+
+- [React Native documentation](https://reactnative.dev/docs/getting-started)
+- [Expo documentation](https://docs.expo.dev/)
 - [Expo Haptics](https://docs.expo.dev/versions/latest/sdk/haptics/)
 - [Expo Accelerometer](https://docs.expo.dev/versions/latest/sdk/accelerometer/)
-- [GitHub original web scaffold](https://github.com/jtimm-gicw/todo-app/tree/main)
-
-## 🚀 Publish this as a NEW GitHub repository on `main`
-
-1. On GitHub, select **New repository** and name it `js-401-class-41-mobile-todo` (or your course-code/lab-number format). Choose **Public**, and **do not** initialize it with a README because this folder already has one.
-2. In the terminal, inside the downloaded `mobile-todo-class41` folder, run:
-
-```bash
-git init -b main
-git add .
-git commit -m "Class 41: React Native Expo MVP"
-git remote add origin https://github.com/YOUR_USERNAME/js-401-class-41-mobile-todo.git
-git push -u origin main
-```
-
-3. Replace `YOUR_USERNAME` with your GitHub username. Share `https://github.com/YOUR_USERNAME/js-401-class-41-mobile-todo/blob/main/README.md` for the lab.
-
-**Do not** push to the original `todo-app` repository; this is a new and separate app.

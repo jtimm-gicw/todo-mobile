@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "Mobile To-Do 41",
-    "slug": "mobile-todo-class41",
+    "name": "Mobile To-Do 42",
+    "slug": "todo-mobile-app-class42",
     "version": "1.0.0",
     "orientation": "portrait",
-    "userInterfaceStyle": "light",
+    "userInterfaceStyle": "automatic",
     "ios": {
       "supportsTablet": true
     },
     "android": {
-      "package": "com.example.mobiletodo41"
+      "package": "com.example.mobiletodo42"
     }
   }
 }
